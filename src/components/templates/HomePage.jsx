@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { currencyData } from "../../constants/currencyData";
+import { currencyDataPromise } from "../../constants/currencyData";
 //helpers
 import currencyConveter from "../../utils/currencyConverter";
 //components
@@ -11,7 +11,19 @@ const HomePage = () => {
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState("USD");
   const [stateResult, setStateResult] = useState("");
+  const [currencyData, setCurrencyData] = useState(null);
   const stateCurrency = useRef({ amount: "", currency: "" });
+
+  useEffect(() => {
+    currencyDataPromise.then((data) => {
+      setCurrencyData(data);
+    });
+  }, []);
+
+  if (!currencyData) {
+    return <div>Loading...</div>;
+  }
+
   const fromCurrencyData = currencyData[currency];
   const toCurrency = fromCurrencyData.convertTo;
   const toCurrencyData = currencyData[toCurrency];
